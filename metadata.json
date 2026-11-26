@@ -1,0 +1,6 @@
+{
+  "name": "Softwave Top 20",
+  "description": "A tactile neumorphic album browser for 20 favourite records with Gemini-powered cover discovery, album dossiers, unique track-by-track descriptions, streaming links, and Last.fm scrobble links.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
