@@ -1,4 +1,4 @@
-import { ExternalLink, Search, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, ExternalLink, Search, Sparkles } from 'lucide-react';
 import type { AlbumMoodGroup, AlbumState } from '../data/albums';
 import { AlbumArtwork } from './AlbumArtwork';
 
@@ -15,6 +15,7 @@ interface AlbumGridProps {
   onSearchChange: (q: string) => void;
   onGroupChange: (group: AlbumMoodGroup) => void;
   onSortChange: (sort: SortOrder) => void;
+  onOpenCompare: () => void;
 }
 
 const FILTER_TABS: Array<{ id: AlbumMoodGroup; label: string }> = [
@@ -35,6 +36,7 @@ export function AlbumGrid({
   onSearchChange,
   onGroupChange,
   onSortChange,
+  onOpenCompare,
 }: AlbumGridProps) {
   return (
     <section id="album-collection" className="space-y-6">
@@ -86,6 +88,15 @@ export function AlbumGrid({
               </button>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={onOpenCompare}
+            className="neu-btn inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#2f2a24] whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b84b3f]"
+          >
+            <ArrowLeftRight className="w-3.5 h-3.5 text-[#b84b3f]" />
+            <span>Compare Albums</span>
+          </button>
         </div>
       </div>
 

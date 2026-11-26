@@ -1,4 +1,5 @@
 import {
+  ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
   Disc3,
@@ -25,6 +26,7 @@ interface PlayerStageProps {
   onPrevAlbum: () => void;
   onNextAlbum: () => void;
   onEnrich: (force?: boolean) => void;
+  onOpenCompare: () => void;
 }
 
 export function PlayerStage({
@@ -38,6 +40,7 @@ export function PlayerStage({
   onPrevAlbum,
   onNextAlbum,
   onEnrich,
+  onOpenCompare,
 }: PlayerStageProps) {
   const enriched = album.enriched;
   const links = {
@@ -307,19 +310,29 @@ export function PlayerStage({
               <h2 className="text-xs font-semibold tracking-wide text-[#5a5348]">
                 Listen &amp; Scrobble
               </h2>
-              {enriched && (
+              <div className="flex items-center gap-4">
                 <button
                   type="button"
-                  onClick={() => onEnrich(true)}
-                  disabled={isLoadingEnrich}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5a5348] hover:text-[#b84b3f] transition-colors disabled:opacity-50 cursor-pointer"
+                  onClick={onOpenCompare}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5a5348] hover:text-[#b84b3f] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
-                  <RefreshCw
-                    className={`w-3.5 h-3.5 ${isLoadingEnrich ? 'animate-spin' : ''}`}
-                  />
-                  <span>{isLoadingEnrich ? 'Refreshing...' : 'Regenerate Notes'}</span>
+                  <ArrowLeftRight className="w-3.5 h-3.5" />
+                  <span>Compare</span>
                 </button>
-              )}
+                {enriched && (
+                  <button
+                    type="button"
+                    onClick={() => onEnrich(true)}
+                    disabled={isLoadingEnrich}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5a5348] hover:text-[#b84b3f] transition-colors disabled:opacity-50 whitespace-nowrap shrink-0 cursor-pointer"
+                  >
+                    <RefreshCw
+                      className={`w-3.5 h-3.5 ${isLoadingEnrich ? 'animate-spin' : ''}`}
+                    />
+                    <span>{isLoadingEnrich ? 'Refreshing...' : 'Regenerate Notes'}</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">

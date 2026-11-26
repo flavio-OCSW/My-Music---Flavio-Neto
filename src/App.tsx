@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlbumCompareModal } from './components/AlbumCompareModal';
 import { AlbumGrid, type SortOrder } from './components/AlbumGrid';
 import { ListeningStats } from './components/ListeningStats';
 import { PlayerStage } from './components/PlayerStage';
@@ -35,6 +36,10 @@ export default function App() {
   const [enrichingIds, setEnrichingIds] = useState<Set<string>>(new Set());
   const [errorsById, setErrorsById] = useState<Record<string, string>>({});
   const [isBatchEnriching, setIsBatchEnriching] = useState<boolean>(false);
+
+  const [isCompareOpen, setIsCompareOpen] = useState<boolean>(false);
+  const [compareLeftId, setCompareLeftId] = useState<string>(FAVORITE_ALBUMS[0].id);
+  const [compareRightId, setCompareRightId] = useState<string>(FAVORITE_ALBUMS[1].id);
 
   const batchCancelledRef = useRef<boolean>(false);
   const albumsRef = useRef<AlbumState[]>(albums);
@@ -279,6 +284,21 @@ export default function App() {
     return sorted;
   }, [activeGroup, albums, searchQuery, sortOrder]);
 
+  const openCompareModal = useCallback(
+    (primaryId?: string) => {
+      const targetLeft = primaryId ?? selectedId;
+      setCompareLeftId(targetLeft);
+      setCompareRightId((prevRight) => {
+        if (prevRight && prevRight !== targetLeft) return prevRight;
+        const fallback =
+          FAVORITE_ALBUMS.find((a) => a.id !== targetLeft) ?? FAVORITE_ALBUMS[1];
+        return fallback.id;
+      });
+      setIsCompareOpen(true);
+    },
+    [selectedId]
+  );
+
   return (
     <div id="top" className="min-h-screen bg-[#E6E1D8] text-[#2f2a24]">
       {/* Strict 3-Zone Top Bar Contract */}
@@ -357,6 +377,7 @@ export default function App() {
           onPrevAlbum={handlePrevAlbum}
           onNextAlbum={handleNextAlbum}
           onEnrich={(force) => enrichAlbum(selectedAlbum.id, Boolean(force))}
+          onOpenCompare={() => openCompareModal(selectedAlbum.id)}
         />
 
         <AlbumGrid
@@ -370,6 +391,7 @@ export default function App() {
           onSearchChange={setSearchQuery}
           onGroupChange={setActiveGroup}
           onSortChange={setSortOrder}
+          onOpenCompare={() => openCompareModal(selectedAlbum.id)}
         />
 
         <ListeningStats
@@ -378,6 +400,23 @@ export default function App() {
           onSelectAlbum={(id) => handleSelectAlbum(id, true)}
         />
       </main>
+
+      <AlbumCompareModal
+        isOpen={isCompareOpen}
+        albums={albums}
+        leftId={compareLeftId}
+        rightId={compareRightId}
+        enrichingIds={enrichingIds}
+        onSelectLeft={setCompareLeftId}
+        onSelectRight={setCompareRightId}
+        onSwap={() => {
+          setCompareLeftId(compareRightId);
+          setCompareRightId(compareLeftId);
+        }}
+        onEnrichAlbum={(id) => void enrichAlbum(id, false)}
+        onSelectForStage={(id) => handleSelectAlbum(id, true)}
+        onClose={() => setIsCompareOpen(false)}
+      />
 
       <footer className="max-w-[1240px] mx-auto px-4 sm:px-8 py-8 border-t border-[#c9c2b5]/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#786f62]">
         <p>Softwave 20 — Personal Album Archive &amp; Tracklist Notes</p>
